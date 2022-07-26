@@ -1,0 +1,12 @@
+Warning: highly experimental
+
+Introducing Portable Storage 3 Fluids.
+
+A mod that provides you with a variety of fluid containers to store your liquids.
+
+Bucket: Stores 10 buckets of liquids
+Drum: Stores 100 buckets of liquids
+Tank: Stores 1000 buckets of liquids
+
+Fluid containers act like adjacent liquids, that means you can craft stuff like Bottled Honey without having to get stung by bees!
+Any recipe that uses filled buckets will be able to use liquids from fluid containers instead, and you will save some iron!

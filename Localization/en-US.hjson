@@ -1,0 +1,12 @@
+﻿Mods: {
+	PortableStorageFluids: {
+		ItemName: {
+			Bucket: Bucket
+			Drum: Drum
+			Tank: Tank
+		}
+		
+		TankTooltip: Holding {0:0.#}/{1:0.#} buckets of {2}
+		TankTooltipEmpty: Empty
+	}
+}
