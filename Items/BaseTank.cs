@@ -73,9 +73,9 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 	{
 		int targetX = Player.tileTargetX;
 		int targetY = Player.tileTargetY;
-
 		Tile tile = Main.tile[targetX, targetY];
 
+		// place
 		if (player.altFunctionUse == 2)
 		{
 			if (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType] && tile.TileType != 546)
@@ -84,43 +84,40 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 			if (storage[0].Fluid is null)
 				return false;
 
-			if (tile.LiquidAmount == 0 || tile.LiquidType == storage[0].Fluid.Type)
-			{
-				if (!storage.RemoveFluid(player, 0, out var stack, byte.MaxValue - tile.LiquidAmount)) return false;
+			if (tile.LiquidAmount != 0 && tile.LiquidType != storage[0].Fluid.Type)
+				return false;
 
-				SoundEngine.PlaySound(SoundID.Splash, player.position);
-				
-				tile.LiquidType = storage[0].Fluid.Type;
-				tile.LiquidAmount += (byte)stack.Volume;
+			if (!storage.RemoveFluid(player, 0, out FluidStack fluid, byte.MaxValue - tile.LiquidAmount))
+				return false;
 
-				WorldGen.SquareTileFrame(targetX, targetY);
+			SoundEngine.PlaySound(SoundID.Splash, player.position);
 
-				if (Main.netMode == NetmodeID.MultiplayerClient)
-					NetMessage.sendWater(targetX, targetY);
-			}
+			tile.LiquidType = storage[0].Fluid.Type;
+			tile.LiquidAmount += (byte)fluid.Volume;
+
+			WorldGen.SquareTileFrame(targetX, targetY);
+
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				NetMessage.sendWater(targetX, targetY);
 		}
+		// remove
 		else
 		{
 			if (tile.LiquidAmount <= 0)
 				return false;
 
-			int liquidType = tile.LiquidType;
-
-			FluidStack stack = new FluidStack(FluidLoader.GetFluid(liquidType), tile.LiquidAmount);
+			FluidStack stack = new FluidStack(FluidLoader.GetFluid(tile.LiquidType), tile.LiquidAmount);
 			if (!storage.InsertFluid(player, 0, ref stack))
-			{
 				return false;
-			}
-
-			byte remaining = (byte)stack.Volume;
 
 			SoundEngine.PlaySound(SoundID.Splash, player.position);
 
+			byte remaining = (byte)stack.Volume;
 			tile.LiquidAmount = remaining;
 			if (remaining <= 0) tile.LiquidType = LiquidID.Water;
-			
+
 			WorldGen.SquareTileFrame(targetX, targetY, false);
-			
+
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 				NetMessage.sendWater(targetX, targetY);
 			else
