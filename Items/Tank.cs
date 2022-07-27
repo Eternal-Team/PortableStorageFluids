@@ -7,7 +7,7 @@ namespace PortableStorageFluids.Items;
 
 public class Tank : BaseTank
 {
-	// public override string Texture => PortableStorageFluids.AssetPath + "Textures/Items/Wallet";
+	public override string Texture => PortableStorageFluids.AssetPath + "Textures/Tank";
 
 	public override void OnCreate(ItemCreationContext context)
 	{
