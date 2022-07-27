@@ -20,9 +20,18 @@ public class Bucket : BaseTank
 	{
 		base.SetDefaults();
 
-		Item.width = 28;
+		Item.width = 22;
 		Item.height = 28;
-		Item.value = Item.buyPrice(gold: 5);
+		Item.value = Item.buyPrice(silver: 1);
 		Item.rare = ItemRarityID.Blue;
+	}
+
+	public override void AddRecipes()
+	{
+		CreateRecipe()
+			.AddRecipeGroup(RecipeGroupID.Wood, 7)
+			.AddRecipeGroup(RecipeGroupID.IronBar, 3)
+			.AddTile(TileID.WorkBenches)
+			.Register();
 	}
 }

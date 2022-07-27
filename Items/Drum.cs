@@ -20,9 +20,24 @@ public class Drum : BaseTank
 	{
 		base.SetDefaults();
 
-		Item.width = 28;
-		Item.height = 28;
-		Item.value = Item.buyPrice(gold: 5);
-		Item.rare = ItemRarityID.Blue;
+		Item.width = 24;
+		Item.height = 40;
+		Item.value = Item.buyPrice(gold: 1);
+		Item.rare = ItemRarityID.Pink;
+	}
+
+	public override void AddRecipes()
+	{
+		CreateRecipe()
+			.AddIngredient(ItemID.MythrilBar, 10)
+			.AddIngredient(ItemID.SlimeBlock, 2)
+			.AddTile(TileID.MythrilAnvil)
+			.Register();
+
+		CreateRecipe()
+			.AddIngredient(ItemID.CobaltBar, 10)
+			.AddIngredient(ItemID.SlimeBlock, 2)
+			.AddTile(TileID.MythrilAnvil)
+			.Register();
 	}
 }

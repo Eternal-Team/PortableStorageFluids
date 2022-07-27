@@ -20,9 +20,18 @@ public class Tank : BaseTank
 	{
 		base.SetDefaults();
 
-		Item.width = 28;
-		Item.height = 28;
-		Item.value = Item.buyPrice(gold: 5);
-		Item.rare = ItemRarityID.Blue;
+		Item.width = 40;
+		Item.height = 48;
+		Item.value = Item.buyPrice(gold: 10);
+		Item.rare = ItemRarityID.Red;
+	}
+
+	public override void AddRecipes()
+	{
+		CreateRecipe()
+			.AddIngredient(ItemID.LunarBar, 3)
+			.AddIngredient(ItemID.SlimeBlock, 50)
+			.AddTile(TileID.MythrilAnvil)
+			.Register();
 	}
 }
