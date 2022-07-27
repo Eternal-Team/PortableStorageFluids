@@ -20,6 +20,7 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 
 	public Guid ID;
 	protected FluidStorage storage;
+	public bool BucketMode;
 
 	protected FluidStorage Storage
 	{
@@ -35,6 +36,7 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 	{
 		BaseTank clone = (BaseTank)base.Clone(item);
 		clone.Storage = Storage.Clone();
+		clone.BucketMode = BucketMode;
 		clone.ID = ID;
 		return clone;
 	}
@@ -42,6 +44,7 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 	public override void OnCreate(ItemCreationContext context)
 	{
 		ID = Guid.NewGuid();
+		BucketMode = false;
 	}
 
 	public override void SetStaticDefaults()
@@ -59,18 +62,47 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 
 	public override void ModifyTooltips(List<TooltipLine> tooltips)
 	{
+		if (BucketMode)
+		{
+			TooltipLine tooltipLine = tooltips.Find(line => line.Mod == "Terraria" && line.Name == "ItemName");
+			if (tooltipLine != null) tooltipLine.Text += " (Bucket)";
+		}
+
 		FluidStack fluidStack = storage[0];
 		string text = fluidStack?.Fluid != null ? Language.GetText("Mods.PortableStorageFluids.TankTooltip").Format(fluidStack.Volume / 255f, storage.MaxVolumeFor(0) / 255f, fluidStack.Fluid.DisplayName.Get()) : Language.GetText("Mods.PortableStorageFluids.TankTooltipEmpty").ToString();
 
 		tooltips.Add(new TooltipLine(Mod, "PortableStorageFluids:TankTooltip", text));
 	}
 
-	public override bool ConsumeItem(Player player) => false;
+	public override bool ConsumeItem(Player player) => !BucketMode;
 
 	public override bool AltFunctionUse(Player player) => true;
 
+	public void SwitchBucketMode()
+	{
+		BucketMode = !BucketMode;
+
+		Main.NewText(BucketMode ? "Bucket Mode: On" : "Bucket Mode: Off");
+
+		if (!BucketMode)
+		{
+			Item.createTile = ModContent.TileType<Tiles.Bucket>();
+			Item.consumable = true;
+		}
+		else
+		{
+			Item.createTile = -1;
+			Item.consumable = false;
+		}
+	}
+	
 	public override bool? UseItem(Player player)
 	{
+		if (!BucketMode)
+		{
+			return true;
+		}
+
 		int targetX = Player.tileTargetX;
 		int targetY = Player.tileTargetY;
 		Tile tile = Main.tile[targetX, targetY];
@@ -138,12 +170,25 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 	{
 		tag.Set("ID", ID);
 		tag.Set("Fluids", Storage.Save());
+		tag.Set("BucketMode", BucketMode);
 	}
 
 	public override void LoadData(TagCompound tag)
 	{
 		ID = tag.Get<Guid>("ID");
 		Storage.Load(tag.Get<TagCompound>("Fluids"));
+		BucketMode = tag.GetBool("BucketMode");
+		
+		if (!BucketMode)
+		{
+			Item.createTile = ModContent.TileType<Tiles.Bucket>();
+			Item.consumable = true;
+		}
+		else
+		{
+			Item.createTile = -1;
+			Item.consumable = false;
+		}
 	}
 
 	public FluidStorage GetFluidStorage() => Storage;
