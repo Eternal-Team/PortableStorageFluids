@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using BaseLibrary;
 using BaseLibrary.UI;
@@ -124,7 +124,7 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 
 			SoundEngine.PlaySound(SoundID.Splash, player.position);
 
-			tile.LiquidType = storage[0].Fluid.Type;
+			tile.LiquidType = storage[0].Fluid?.Type ?? 0;
 			tile.LiquidAmount += (byte)fluid.Volume;
 
 			WorldGen.SquareTileFrame(targetX, targetY);
