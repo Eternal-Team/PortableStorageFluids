@@ -6,14 +6,14 @@ using Terraria.ObjectData;
 
 namespace PortableStorageFluids.Tiles;
 
-public class Bucket : BaseTankTile
+public class Drum : BaseTankTile
 {
-	public override string Texture => PortableStorageFluids.AssetPath + "Textures/Bucket";
+	public override string Texture => PortableStorageFluids.AssetPath + "Textures/Drum";
 
 	public override void SetStaticDefaults()
 	{
-		TileObjectData.newTile.HookPostPlaceMyPlayer = new PlacementHook(ModContent.GetInstance<TileEntities.Bucket>().Hook_AfterPlacement, -1, 0, false);
-		ItemDrop = -ModContent.ItemType<Items.Bucket>();
+		TileObjectData.newTile.HookPostPlaceMyPlayer = new PlacementHook(ModContent.GetInstance<TileEntities.Drum>().Hook_AfterPlacement, -1, 0, false);
+		ItemDrop = -ModContent.ItemType<Items.Drum>();
 
 		Main.tileSolid[Type] = false;
 		Main.tileSolidTop[Type] = false;

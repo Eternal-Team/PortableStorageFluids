@@ -6,14 +6,14 @@ using Terraria.ObjectData;
 
 namespace PortableStorageFluids.Tiles;
 
-public class Bucket : BaseTankTile
+public class Tank : BaseTankTile
 {
-	public override string Texture => PortableStorageFluids.AssetPath + "Textures/Bucket";
+	public override string Texture => PortableStorageFluids.AssetPath + "Textures/Tank";
 
 	public override void SetStaticDefaults()
 	{
-		TileObjectData.newTile.HookPostPlaceMyPlayer = new PlacementHook(ModContent.GetInstance<TileEntities.Bucket>().Hook_AfterPlacement, -1, 0, false);
-		ItemDrop = -ModContent.ItemType<Items.Bucket>();
+		TileObjectData.newTile.HookPostPlaceMyPlayer = new PlacementHook(ModContent.GetInstance<TileEntities.Tank>().Hook_AfterPlacement, -1, 0, false);
+		ItemDrop = -ModContent.ItemType<Items.Tank>();
 
 		Main.tileSolid[Type] = false;
 		Main.tileSolidTop[Type] = false;
@@ -24,12 +24,12 @@ public class Bucket : BaseTankTile
 		Main.tileLighted[Type] = true;
 
 		var newTile = TileObjectData.newTile;
-		newTile.Width = 2;
-		newTile.Height = 2;
+		newTile.Width = 3;
+		newTile.Height = 3;
 		newTile.Origin = new Point16(0, 0);
 		newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, newTile.Width, 0);
 		newTile.UsesCustomCanPlace = true;
-		newTile.CoordinateHeights = new[] { 16, 16 };
+		newTile.CoordinateHeights = new[] { 16, 16, 16 };
 		newTile.CoordinateWidth = 16;
 		newTile.CoordinatePadding = 2;
 		TileObjectData.addTile(Type);

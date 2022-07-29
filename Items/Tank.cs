@@ -9,6 +9,8 @@ public class Tank : BaseTank
 {
 	public override string Texture => PortableStorageFluids.AssetPath + "Textures/Tank";
 
+	protected override int TileType => ModContent.TileType<Tiles.Tank>();
+
 	public override void OnCreate(ItemCreationContext context)
 	{
 		base.OnCreate(context);

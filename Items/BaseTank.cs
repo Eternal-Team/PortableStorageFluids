@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using BaseLibrary;
 using BaseLibrary.UI;
@@ -20,7 +20,28 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 
 	public Guid ID;
 	protected FluidStorage storage;
-	public bool BucketMode;
+	private bool _bucketMode;
+	protected abstract int TileType { get; }
+
+	public bool BucketMode
+	{
+		get => _bucketMode;
+		set
+		{
+			if (!value)
+			{
+				Item.createTile = TileType;
+				Item.consumable = true;
+			}
+			else
+			{
+				Item.createTile = -1;
+				Item.consumable = false;
+			}
+			
+			_bucketMode = value;
+		}
+	}
 
 	protected FluidStorage Storage
 	{
@@ -83,17 +104,6 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 		BucketMode = !BucketMode;
 
 		Main.NewText(BucketMode ? "Bucket Mode: On" : "Bucket Mode: Off");
-
-		if (!BucketMode)
-		{
-			Item.createTile = ModContent.TileType<Tiles.Bucket>();
-			Item.consumable = true;
-		}
-		else
-		{
-			Item.createTile = -1;
-			Item.consumable = false;
-		}
 	}
 	
 	public override bool? UseItem(Player player)
@@ -159,13 +169,6 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 		return true;
 	}
 
-	// public override bool CanRightClick() => true;
-	//
-	// public override void RightClick(Player player)
-	// {
-	// 	PanelUI.Instance.HandleUI(this);
-	// }
-
 	public override void SaveData(TagCompound tag)
 	{
 		tag.Set("ID", ID);
@@ -178,17 +181,6 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 		ID = tag.Get<Guid>("ID");
 		Storage.Load(tag.Get<TagCompound>("Fluids"));
 		BucketMode = tag.GetBool("BucketMode");
-		
-		if (!BucketMode)
-		{
-			Item.createTile = ModContent.TileType<Tiles.Bucket>();
-			Item.consumable = true;
-		}
-		else
-		{
-			Item.createTile = -1;
-			Item.consumable = false;
-		}
 	}
 
 	public FluidStorage GetFluidStorage() => Storage;

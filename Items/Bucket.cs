@@ -9,6 +9,8 @@ public class Bucket : BaseTank
 {
 	public override string Texture => PortableStorageFluids.AssetPath + "Textures/Bucket";
 
+	protected override int TileType => ModContent.TileType<Tiles.Bucket>();
+
 	public override void OnCreate(ItemCreationContext context)
 	{
 		base.OnCreate(context);

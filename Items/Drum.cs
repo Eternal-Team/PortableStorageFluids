@@ -9,6 +9,8 @@ public class Drum : BaseTank
 {
 	public override string Texture => PortableStorageFluids.AssetPath + "Textures/Drum";
 
+	protected override int TileType => ModContent.TileType<Tiles.Drum>();
+	
 	public override void OnCreate(ItemCreationContext context)
 	{
 		base.OnCreate(context);
