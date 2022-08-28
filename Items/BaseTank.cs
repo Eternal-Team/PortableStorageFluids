@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using BaseLibrary;
 using BaseLibrary.UI;
@@ -20,26 +20,31 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 
 	public Guid ID;
 	protected FluidStorage storage;
-	private bool _bucketMode;
+	
 	protected abstract int TileType { get; }
 
+	private bool bucketMode;
 	public bool BucketMode
 	{
-		get => _bucketMode;
+		get => bucketMode;
 		set
 		{
 			if (!value)
 			{
 				Item.createTile = TileType;
 				Item.consumable = true;
+			
+				Item.ClearNameOverride();
 			}
 			else
 			{
 				Item.createTile = -1;
 				Item.consumable = false;
+				
+				Item.SetNameOverride(Lang.GetItemNameValue(Item.type) + " (Bucket)");
 			}
 			
-			_bucketMode = value;
+			bucketMode = value;
 		}
 	}
 
@@ -79,16 +84,11 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 		Item.useAnimation = 5;
 		Item.useStyle = ItemUseStyleID.Swing;
 		Item.rare = ItemRarityID.White;
+		Item.autoReuse = true;
 	}
 
 	public override void ModifyTooltips(List<TooltipLine> tooltips)
 	{
-		if (BucketMode)
-		{
-			TooltipLine tooltipLine = tooltips.Find(line => line.Mod == "Terraria" && line.Name == "ItemName");
-			if (tooltipLine != null) tooltipLine.Text += " (Bucket)";
-		}
-
 		FluidStack fluidStack = storage[0];
 		string text = fluidStack?.Fluid != null ? Language.GetText("Mods.PortableStorageFluids.TankTooltip").Format(fluidStack.Volume / 255f, storage.MaxVolumeFor(0) / 255f, fluidStack.Fluid.DisplayName.Get()) : Language.GetText("Mods.PortableStorageFluids.TankTooltipEmpty").ToString();
 
@@ -109,9 +109,7 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 	public override bool? UseItem(Player player)
 	{
 		if (!BucketMode)
-		{
 			return true;
-		}
 
 		int targetX = Player.tileTargetX;
 		int targetY = Player.tileTargetY;
@@ -123,10 +121,11 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 			if (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType] && tile.TileType != 546)
 				return false;
 
-			if (storage[0].Fluid is null)
+			var fluidStack = storage[0];
+			if (fluidStack.Fluid is null)
 				return false;
 
-			if (tile.LiquidAmount != 0 && tile.LiquidType != storage[0].Fluid.Type)
+			if (tile.LiquidAmount != 0 && tile.LiquidType != fluidStack.Fluid.Type)
 				return false;
 
 			if (!storage.RemoveFluid(player, 0, out FluidStack fluid, byte.MaxValue - tile.LiquidAmount))
@@ -134,7 +133,7 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 
 			SoundEngine.PlaySound(SoundID.Splash, player.position);
 
-			tile.LiquidType = storage[0].Fluid?.Type ?? 0;
+			tile.LiquidType = fluidStack.Fluid?.Type ?? 0;
 			tile.LiquidAmount += (byte)fluid.Volume;
 
 			WorldGen.SquareTileFrame(targetX, targetY);
