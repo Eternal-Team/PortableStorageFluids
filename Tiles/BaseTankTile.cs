@@ -17,7 +17,7 @@ public abstract class BaseTankTile : ModTile
 		if (item.ModItem is not BaseTank tank)
 			return;
 
-		FluidStack teFluid = tileEntity.GetFluidStorage()[0];
+		FluidStack teFluid = tileEntity!.GetFluidStorage()[0];
 		FluidStack itemFluid = tank.GetFluidStorage()[0];
 
 		teFluid.Fluid = itemFluid.Fluid;
@@ -34,13 +34,13 @@ public abstract class BaseTankTile : ModTile
 
 		if (Main.item[k].ModItem is BaseTank item)
 		{
-			FluidStack teFluid = tileEntity.GetFluidStorage()[0];
+			FluidStack teFluid = tileEntity!.GetFluidStorage()[0];
 			FluidStack itemFluid = item.GetFluidStorage()[0];
 
 			itemFluid.Fluid = teFluid.Fluid;
 			itemFluid.Volume = teFluid.Volume;
 		}
 
-		tileEntity.Kill(i, j);
+		tileEntity!.Kill(i, j);
 	}
 }

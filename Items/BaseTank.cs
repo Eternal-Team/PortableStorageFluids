@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using BaseLibrary;
 using BaseLibrary.UI;
@@ -15,15 +15,23 @@ namespace PortableStorageFluids.Items;
 
 public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 {
-	// public SoundStyle? OpenSound => new SoundStyle("PortableStorage/Assets/Sounds/BagOpen");
-	// public SoundStyle? CloseSound => new SoundStyle("PortableStorage/Assets/Sounds/BagClose");
+	public SoundStyle? GetOpenSound()
+	{
+		return SoundID.MenuTick;
+	}
+
+	public SoundStyle? GetCloseSound()
+	{
+		return SoundID.MenuTick;
+	}
 
 	public Guid ID;
 	protected FluidStorage storage;
-	
+
 	protected abstract int TileType { get; }
 
 	private bool bucketMode;
+
 	public bool BucketMode
 	{
 		get => bucketMode;
@@ -33,17 +41,17 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 			{
 				Item.createTile = TileType;
 				Item.consumable = true;
-			
+
 				Item.ClearNameOverride();
 			}
 			else
 			{
 				Item.createTile = -1;
 				Item.consumable = false;
-				
+
 				Item.SetNameOverride(Lang.GetItemNameValue(Item.type) + " (Bucket)");
 			}
-			
+
 			bucketMode = value;
 		}
 	}
@@ -99,13 +107,23 @@ public abstract class BaseTank : BaseItem, ICraftingStorage, IHasUI
 
 	public override bool AltFunctionUse(Player player) => true;
 
+	public override bool CanRightClick() => true;
+
+	public override void RightClick(Player player)
+	{
+		if (player.whoAmI == Main.LocalPlayer.whoAmI)
+			PanelUI.Instance.HandleUI(this);
+
+		Item.stack++;
+	}
+
 	public void SwitchBucketMode()
 	{
 		BucketMode = !BucketMode;
 
 		Main.NewText(BucketMode ? "Bucket Mode: On" : "Bucket Mode: Off");
 	}
-	
+
 	public override bool? UseItem(Player player)
 	{
 		if (!BucketMode)
